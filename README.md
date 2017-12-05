@@ -8,7 +8,7 @@ Using the `telemetry.db` module requires PostgreSQL >= 9.5.
 
 Run Riemann with `telemetry.jar` included in `$EXTRA_CLASSPATH`.
 
-See `riemann.config.example`.
+See `riemann.config.example` and `doc/` for more details.
 
 ### Connection parameters
 
