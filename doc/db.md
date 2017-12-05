@@ -18,7 +18,9 @@ This roughly corresponds to the built-in Riemann index.
 
 Events passed to this stream will be recorded in the `riemann_index` table. Every event will issue a query, so avoid using this with high-rate services.
 
-If the state of a service changes between two successive events, a record will be appended to the table `riemann_index_state_log`.
+Tags are inserted into a `text[]` column. Customer attributes are inserted into a `jsonb` column. Keep in mind that all custom attributes in Riemann are initially decoded into strings; pre-process the events as necessary.
+
+If the state of a service changes between two successive events with the same service and host, a record will be appended to the table `riemann_index_state_log`. This is managed by a table trigger.
 
 ### `(inventory dbconn)`
 
@@ -30,4 +32,4 @@ These two streams are similar but serve different purposes and should be used wi
 
 The purpose of `index` is to gather a real-time snapshot of the system state, and works best with low-rate services with occasional flapping (once per second or less) that provide a state. Think "health probe" or "free memory" rather than "http request" or "method call". A high-rate service with a lot of flapping, like a frequently failing method call, will strain the DB with updates and quickly bloat the state log table.
 
-The purpose of `inventory` is to provide a complete list of every existing service for documentation purposes. It can be an immediate child of `(streams)` with no filtering. It uses a long buffer internally, so high-rate services will not overload it.
+The purpose of `inventory` is to provide a complete list of every existing service for documentation purposes, as in can be tricky to find which services are provided by any given part of a large system. It can be an immediate child of `(streams)` with no filtering. It uses a long buffer internally, so high-rate services will not overload it.
