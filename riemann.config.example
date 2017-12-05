@@ -1,0 +1,14 @@
+(logging/init {:console true})
+(tcp-server {})
+
+(require 'telemetry.db)
+
+(let [db (telemetry.db/connect)
+      dbindex (telemetry.db/index db)
+      dbinventory (telemetry.db/inventory db)]
+  (streams
+   (default :ttl 0
+     (where (> ttl 0)
+            dbindex))
+
+   dbinventory))
