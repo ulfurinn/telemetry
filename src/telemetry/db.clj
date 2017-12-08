@@ -37,15 +37,20 @@
 (defn- long-str [& strings]
   (clojure.string/join " " strings))
 
-(def insert-index-query (long-str "INSERT INTO riemann_index (service, host, metric, state, description, ttl, timestamp, tags, attributes)"
-                                  "VALUES ($1, $2, $3, $4, $5, $6, to_timestamp($7), ARRAY(SELECT jsonb_array_elements_text($8)), $9)"
-                                  "ON CONFLICT (service, host) DO"
-                                  "UPDATE SET metric = EXCLUDED.metric, state = EXCLUDED.state, description = EXCLUDED.description, ttl = EXCLUDED.ttl, timestamp = EXCLUDED.timestamp, tags = EXCLUDED.tags, attributes = EXCLUDED.attributes"))
+(defn- insert-query [table]
+  (long-str (str "INSERT INTO " table " (service, host, metric, state, description, ttl, timestamp, tags, attributes)")
+            "VALUES ($1, $2, $3, $4, $5, $6, to_timestamp($7), ARRAY(SELECT jsonb_array_elements_text($8)), $9)"))
 
-(defn index [dbconn]
+(defn- upsert-query [table]
+  (long-str (str "INSERT INTO " table " (service, host, metric, state, description, ttl, timestamp, tags, attributes)")
+            "VALUES ($1, $2, $3, $4, $5, $6, to_timestamp($7), ARRAY(SELECT jsonb_array_elements_text($8)), $9)"
+            "ON CONFLICT (service, host) DO"
+            "UPDATE SET metric = EXCLUDED.metric, state = EXCLUDED.state, description = EXCLUDED.description, ttl = EXCLUDED.ttl, timestamp = EXCLUDED.timestamp, tags = EXCLUDED.tags, attributes = EXCLUDED.attributes"))
+
+(defn- dbstream [dbconn query]
   (let [to-float (fn [x] (if x (double x) nil))]
     (fn stream [event]
-      (pg/execute! dbconn [insert-index-query
+      (pg/execute! dbconn [query
                            (:service event)
                            (:host event)
                            (to-float (:metric event))
@@ -55,6 +60,14 @@
                            (to-float (:time event))
                            (:tags event)
                            (custom-attributes event)] (fn [ok err] (if err (error [event err])))))))
+
+(defn insert [dbconn table]
+    (dbstream dbconn (insert-query table)))
+
+(defn upsert [dbconn table]
+    (dbstream dbconn (upsert-query table)))
+
+(defn index [dbconn] (upsert dbconn "riemann_index"))
 
 (def insert-inventory-query (long-str "INSERT INTO riemann_inventory (service, host, description, tags, last_seen)"
                                       "VALUES ($1, $2, $3, ARRAY(SELECT jsonb_array_elements_text($4)), to_timestamp($5))"
