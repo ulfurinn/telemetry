@@ -62,10 +62,10 @@
                            (custom-attributes event)] (fn [ok err] (if err (error [event err])))))))
 
 (defn insert [dbconn table]
-    (dbstream dbconn (insert-query table)))
+  (dbstream dbconn (insert-query table)))
 
 (defn upsert [dbconn table]
-    (dbstream dbconn (upsert-query table)))
+  (dbstream dbconn (upsert-query table)))
 
 (defn index [dbconn] (upsert dbconn "riemann_index"))
 
