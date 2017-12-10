@@ -1,6 +1,6 @@
 # `telemetry.db`
 
-The `telemetry.db` module provides streams for storing Riemann events in PostgreSQL.
+The `telemetry.db` namespace provides streams for storing Riemann events in PostgreSQL.
 
 Postgres >= 9.5 is required.
 
