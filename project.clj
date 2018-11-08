@@ -8,12 +8,5 @@
                  [org.postgresql/postgresql "42.1.4"]
                  [migratus "1.0.1"]
                  [cheshire "5.5.0"]]
-  :plugins [[migratus-lein "0.5.3"]]
-  :release-tasks [["vcs" "assert-committed"]
-                  ["change" "version" "leiningen.release/bump-version" "release"]
-                  ["vcs" "commit"]
-                  ["vcs" "tag" "--no-sign"]
-                  ["deploy"]
-                  ["change" "version" "leiningen.release/bump-version"]
-                  ["vcs" "commit"]
-                  ["vcs" "push"]])
+  :plugins [[migratus-lein "0.5.3"]
+            [lein-pprint "1.2.0"]])
