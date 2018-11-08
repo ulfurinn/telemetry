@@ -91,4 +91,4 @@
   (sliding-time-window window-interval flush-interval
                        (fn [window]
                          (let [samples (folds/sorted-sample window points)]
-                           (doseq [event samples] (call-rescue (assoc event :time unix-time) children))))))
+                           (doseq [event samples] (call-rescue (assoc event :time (unix-time)) children))))))
