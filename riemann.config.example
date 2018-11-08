@@ -2,13 +2,18 @@
 (tcp-server {})
 
 (require 'telemetry.db)
+(require '[telemetry.streams :as telemetry])
 
-(let [db (telemetry.db/connect)
-      dbindex (telemetry.db/index db)
-      dbinventory (telemetry.db/inventory db)]
-  (streams
-   (default :ttl 0
-     (where (> ttl 0)
-            dbindex))
+; (let [db (telemetry.db/connect)
+;       dbindex (telemetry.db/index db)
+;       dbinventory (telemetry.db/inventory db)]
+;   (streams
+;    (default :ttl 0
+;      (where (> ttl 0)
+;             dbindex))
 
-   dbinventory))
+;    dbinventory))
+
+; (streams
+;     (where (service "test")
+;         (telemetry/sliding-percentiles 30 5 [0.1 0.5 0.9] #(info %))))

@@ -1,7 +1,8 @@
 (ns telemetry.streams
   (:use [clojure.tools.logging :only [info error]]
-        [riemann.streams :only [call-rescue part-time-simple]]
-        [riemann.time :only [unix-time once! next-tick]]))
+        [riemann.streams :only [call-rescue]]
+        [riemann.time :only [unix-time once! next-tick]])
+  (:require [riemann.folds :as folds]))
 
 (defn part-time-carrying
   ([dt init-fn next-fn empty-fn add finish]
@@ -63,8 +64,8 @@
                       list
                       (fn next [previous start end] (filter-fn previous start end))
                       empty?
-                      (fn add [state event] (conj state event))
-                      (fn finish [state start end] (call-rescue state children))))
+                      (fn add [window event] (conj window event))
+                      (fn finish [window start end] (call-rescue (filter-fn window start end) children))))
 
 (defn sliding-time-window
   "Every flush-interval seconds, forwards a list of events older than window-interal seconds.
@@ -82,3 +83,12 @@
                                     (< diff window-interval)))
                                 window))]
     (apply sliding-window flush-interval filter-window children)))
+
+(defn sliding-percentiles
+  "Like standard riemann percentiles, but based on sliding windows."
+  [window-interval flush-interval points & children]
+
+  (sliding-time-window window-interval flush-interval
+                       (fn [window]
+                         (let [samples (folds/sorted-sample window points)]
+                           (doseq [event samples] (call-rescue (assoc event :time unix-time) children))))))

@@ -1,6 +1,6 @@
-(defproject net.ulfurinn/telemetry "0.1.0"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+(defproject net.ulfurinn/telemetry "0.1.1"
+  :description "Some helpful Riemann streams."
+  :url "https://github.com/ulfurinn/telemetry"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [
