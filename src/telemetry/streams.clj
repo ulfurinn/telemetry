@@ -1,6 +1,6 @@
 (ns telemetry.streams
   (:use [clojure.tools.logging :only [info error]]
-        [riemann.streams :only [call-rescue]]
+        [riemann.streams :only [call-rescue smap]]
         [riemann.time :only [unix-time once! next-tick]])
   (:require [riemann.folds :as folds]))
 
@@ -92,3 +92,16 @@
                        (fn [window]
                          (let [samples (folds/sorted-sample window points)]
                            (doseq [event samples] (call-rescue (assoc event :time (unix-time)) children))))))
+
+(defmacro qos
+  [levels & children]
+  (let [split-levels (map (fn [[state metric :as level]]
+                            (case (count level)
+                              1 [state]
+                              2 [metric state])) (partition-all 2 (reverse levels)))
+        flat-levels (apply concat split-levels)]
+    `(let [set-state# (fn [event#]
+                        (assoc event# :state
+                               (condp < (:metric event#)
+                                 ~@flat-levels)))]
+       (smap set-state# ~@children))))

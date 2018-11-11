@@ -21,3 +21,13 @@ Accumulates incoming events in a list. Every `flush-interval` seconds, filters t
 Every `flush-interval` seconds, emits a list of events received in the last `window-interval` seconds, where `window-interval >= flush-interval`.
 
 For example, suppose you want to emit data to Graphite every 60s, but incoming events are not frequent enough to collect useful information within that time, e.g. you want to measure the 99th percentile but can't get 100 samples within 60s.
+
+## `(qos (level-1 threshold-1 level-2 threshold-2 ... level-n) & children`
+
+Sets `:state` to the `level` value corresponding to where the `:metric` falls between thresholds.
+
+Example:
+
+```clojure
+(telemetry/qos ("ok" 5.0 "warning" 10.0 "critical" 20.0 "alert") email)
+```

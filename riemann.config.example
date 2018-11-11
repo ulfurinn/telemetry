@@ -17,3 +17,6 @@
 ; (streams
 ;     (where (service "test")
 ;         (telemetry/sliding-percentiles 30 5 [0.1 0.5 0.9] #(info %))))
+
+(streams
+    (where (service "test") (telemetry/qos ("ok" 1 "warning" 10 "critical") #(info %))))
