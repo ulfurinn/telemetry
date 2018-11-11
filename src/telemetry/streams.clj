@@ -62,9 +62,9 @@
   [flush-interval filter-fn & children]
   (part-time-carrying flush-interval
                       list
-                      (fn next [previous start end] (filter-fn previous start end))
+                      filter-fn
                       empty?
-                      (fn add [window event] (conj window event))
+                      conj
                       (fn finish [window start end] (call-rescue (filter-fn window start end) children))))
 
 (defn sliding-time-window
