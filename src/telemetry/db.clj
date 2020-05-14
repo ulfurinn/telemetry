@@ -24,7 +24,7 @@
                      :subprotocol "postgresql"
                      :subname (str "//" (host) "/" (dbname))
                      :user (user)
-                     :pass (pass)}}]
+                     :password (pass)}}]
     (migratus/migrate config)))
 
 (defn connect []
