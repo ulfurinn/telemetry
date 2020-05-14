@@ -1,4 +1,4 @@
-(defproject net.ulfurinn/telemetry "0.1.6-SNAPSHOT"
+(defproject net.ulfurinn/telemetry "0.1.6"
   :description "Some helpful Riemann streams."
   :url "https://github.com/ulfurinn/telemetry"
   :license {:name "Eclipse Public License"
