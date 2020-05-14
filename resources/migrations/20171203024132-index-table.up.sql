@@ -10,6 +10,7 @@ CREATE TABLE riemann_index (
 	attributes jsonb,
 	PRIMARY KEY (service, host)
 );
-
+--;;
 CREATE INDEX ON riemann_index (host);
+--;;
 CREATE INDEX ON riemann_index (state);

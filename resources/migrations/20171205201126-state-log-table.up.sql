@@ -8,9 +8,11 @@ CREATE TABLE riemann_index_state_log (
 	timestamp timestamp,
 	PRIMARY KEY (id)
 );
-
+--;;
 CREATE INDEX ON riemann_index_state_log (service);
+--;;
 CREATE INDEX ON riemann_index_state_log (host);
+--;;
 
 CREATE OR REPLACE FUNCTION fn_insert_state_log_change() RETURNS trigger AS
 $$
@@ -26,6 +28,7 @@ BEGIN
 END;
 $$
 LANGUAGE 'plpgsql';
+--;;
 
 CREATE TRIGGER trg_insert_state_log_change
 AFTER INSERT OR UPDATE OF state
